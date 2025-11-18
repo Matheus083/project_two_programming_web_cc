@@ -1,8 +1,6 @@
 <?php
-// Se acessar sem POST, impede undefined variables
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    // Evita notices e redireciona corretamente
-    header("Location: playlist-cadastro-form.php");
+    header("Location: criar.php");
     exit;
 }
 
@@ -53,7 +51,7 @@ $ok = file_put_contents(
     <h1>Playlists</h1>
     <nav>
         <a href="index.php">Início</a>
-        <a href="playlist-cadastro-form.php">Criar Playlist</a>
+        <a href="criar.php">Criar Playlist</a>
     </nav>
 </header>
 
