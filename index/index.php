@@ -1,6 +1,6 @@
 <?php
-require 'lib.php';      // carrega as funções
-$playlists = db_load(); // carrega o JSON como array
+require 'lib.php';      
+$playlists = db_load(); 
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +26,7 @@ $playlists = db_load(); // carrega o JSON como array
   <main>
     <section class="intro">
       <h2>Minhas Playlists</h2>
-      <a href="playlist-cadastro-form.php" class="new-playlist-btn">+ Criar nova playlist</a>
+      <a href="criar.php" class="new-playlist-btn">+ Criar nova playlist</a>
     </section>
 
     <section class="playlist-grid">
@@ -40,14 +40,13 @@ $playlists = db_load(); // carrega o JSON como array
               <?= isset($p["links"]) ? count($p["links"]) : 0 ?> músicas
             </p>
 
-            <!-- Você pode criar um futuro view.php -->
             <button onclick="location.href='view.php?id=<?= $p['id'] ?>'">
               ▶ Ver Playlist
             </button>
           </div>
         <?php endforeach; ?>
       <?php else: ?>
-        <p>Você ainda não possui playlists cadastradas. 😊</p>
+        <p>Você ainda não possui playlists cadastradas. </p>
       <?php endif; ?>
 
     </section>

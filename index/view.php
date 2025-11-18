@@ -1,12 +1,13 @@
+
+
 <?php
 require 'lib.php';
+// ADD BOTÃO PARA ADD OUTRA MUSICA NA PLAYLIST CRIADA
 
-// pega ID da playlist via GET
 $id = $_GET['id'] ?? null;
 
 $playlists = db_load();
 
-// procura playlist pelo id
 $playlist = null;
 foreach ($playlists as $p) {
     if ($p['id'] == $id) {
@@ -65,6 +66,8 @@ if (!$playlist) {
 
   <br>
   <a href="index.php" class="new-playlist-btn">Voltar</a>
+  <a href="" class="new-playlist-btn">Add Musica</a>
+
 
 </main>
 

@@ -1,12 +1,9 @@
 <?php
 
-// Caminho do "banco de dados" (JSON)
 const PLAYLIST_FILE = __DIR__ . '/playlists.json';
 
-// Carrega as playlists do arquivo JSON
 function db_load(): array {
     if (!file_exists(PLAYLIST_FILE)) {
-        // Se não existir ainda, começa com lista vazia
         return [];
     }
 
@@ -17,10 +14,9 @@ function db_load(): array {
         return [];
     }
 
-    return $dados; // aqui $dados é um array de playlists
+    return $dados; 
 }
 
-// Salva as playlists no arquivo JSON
 function db_save(array $playlists): void {
     file_put_contents(
         PLAYLIST_FILE,
@@ -28,14 +24,11 @@ function db_save(array $playlists): void {
     );
 }
 
-// Gera um novo ID para uma playlist
 function next_id(array $playlists): int {
-    // Se não tiver nada, começa em 1
     if (empty($playlists)) {
         return 1;
     }
 
-    // Pega o maior id que já existe e soma 1
     $ids = array_column($playlists, 'id');
     return max($ids) + 1;
 }

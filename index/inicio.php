@@ -10,7 +10,6 @@
   <header>
     <h1>🎧 YouPlaylist</h1>
     <nav>
-      <!-- MENU APONTANDO PARA OS .PHP -->
       <a href="inicio.php">Início</a>
       <a href="index.php">Minhas Playlists</a>
       <a href="sobre.php">Sobre</a>
@@ -22,7 +21,6 @@
       <h2>Bem-vindo ao YouPlaylist!</h2>
       <p>Crie playlists personalizadas usando links do YouTube e organize suas músicas do jeito que quiser.</p>
       <br>
-      <!-- BOTÃO QUE LEVA PARA A TELA DE CRIAR PLAYLIST -->
       <a href="criar.php" class="new-playlist-btn">
         + Criar sua primeira playlist
       </a>

@@ -26,15 +26,13 @@
         <input 
           type="text" 
           name="nome" 
-          placeholder="Ex: Músicas para estudar" 
           required 
         />
 
         <label>Adicionar link do YouTube:</label>
         <input 
           type="url" 
-          name="url" 
-          placeholder="Cole o link aqui (opcional)" 
+          name="url"  
         />
 
         <button type="submit" class="new-playlist-btn">Salvar Playlist</button>
