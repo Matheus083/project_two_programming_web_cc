@@ -11,12 +11,12 @@ Integrantes da equipe:
 - Bruno Sales (Full-Stack);
 
 
-# YouPlaylist 🎧  
+# YourPlaylist 🎧  
 Projeto de Programação Web – Criação e edição de playlists com vídeos do YouTube
 
 ## 📌 Descrição do projeto
 
-O YouPlaylist é um site onde o usuário pode criar playlists personalizadas com links de vídeos do YouTube e reproduzi-los dentro da própria aplicação.  
+O YourPlaylist é um site onde o usuário pode criar playlists personalizadas com links de vídeos do YouTube e reproduzi-los dentro da própria aplicação.  
 A ideia é simular uma experiência simples de “mini Spotify / YouTube playlists”, focando em:
 
 - Organização de playlists
@@ -103,7 +103,7 @@ Página onde o usuário gerencia uma playlist específica.
 ## Sobre Nós / Sobre o Projeto – sobre.php
 
 - Breve texto explicando:
-  - O que é o YouPlaylist
+  - O que é o YourPlaylist
   - Objetivo do projeto na disciplina
   - Nome dos integrantes do grupo
   - Frase de “empresa fictícia”, simulando um serviço de streaming
