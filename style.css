@@ -1,6 +1,4 @@
-/* ---------------------------------------------------
-   CONFIGURAÇÕES GLOBAIS
---------------------------------------------------- */
+
 * {
   margin: 0;
   padding: 0;
@@ -16,9 +14,7 @@ body {
   flex-direction: column;
 }
 
-/* ---------------------------------------------------
-   HEADER / NAVBAR
---------------------------------------------------- */
+
 header {
   background: #1E1E1E;
   padding: 1rem 2rem;
@@ -185,6 +181,27 @@ button:hover,
 .sobre-box p {
   color: #ccc;
 }
+
+.missao {
+  background: #1E1E1E;
+  padding: 1.8rem;
+  border-radius: 1rem;
+  max-width: 800px;
+  margin: 2rem auto;
+  line-height: 1.8rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.missao h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #ff3d2e; 
+}
+
+.missao p {
+  color: #ccc;
+}
+
 
 /* ---------------------------------------------------
    FOOTER
@@ -408,3 +425,34 @@ footer {
    UTILS
 --------------------------------------------------- */
 .hidden { display: none !important; }
+
+/* Bloco motivacional animado */
+.motivacional-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+  border-top: 1px solid #333;
+  padding: 10px 0;
+  z-index: 999;
+}
+
+.motivacional-texto {
+  display: inline-block;
+  white-space: nowrap;
+  color: #ff3d2e;
+  font-size: 1.1rem;
+  font-weight: 500;
+  animation: moverTexto 14s linear infinite;
+}
+
+@keyframes moverTexto {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
