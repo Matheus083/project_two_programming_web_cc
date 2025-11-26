@@ -1,149 +1,191 @@
 <?php
 require 'lib.php';
 
-function extractYoutubeId($url) {
-    if (preg_match('/[?&]v=([a-zA-Z0-9_-]{11})/', $url, $m)) return $m[1];
-    if (preg_match('#youtu\.be/([a-zA-Z0-9_-]{11})#', $url, $m)) return $m[1];
-    if (preg_match('#/embed/([a-zA-Z0-9_-]{11})#', $url, $m)) return $m[1];
-    if (preg_match('/([a-zA-Z0-9_-]{11})/', $url, $m)) return $m[1];
-    return null;
-}
-
 $id = $_GET['id'] ?? null;
-$playlists = db_load();
-
-$playlist = null;
-foreach ($playlists as $p) {
-    if ($p['id'] == $id) {
-        $playlist = $p;
-        break;
-    }
-}
-
-if (!$playlist) {
-    echo "<h2>Playlist não encontrada.</h2>";
+if (!$id) {
+    echo "<p>ID inválido.</p>";
     exit;
 }
 
-$musicas = [];
-if (!empty($playlist['musicas'])) {
-    foreach ($playlist['musicas'] as $m) {
-        $url = $m['url'];
-        $musicas[] = [
-            'id_video' => extractYoutubeId($url),
-            'titulo'   => $m['titulo'] ?? $url,
-            'url'      => $url
-        ];
+$playlists = db_load();
+$playlist = array_values(array_filter($playlists, fn($p) => $p['id'] == $id))[0] ?? null;
+
+if (!$playlist) {
+    echo "<p>Playlist não encontrada.</p>";
+    exit;
+}
+
+$links = $playlist['links'] ?? [];
+$total = count($links);
+
+function extract_youtube_id_local($url) {
+    if (preg_match('/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/', trim($url), $m)) {
+        return $m[1];
     }
-} elseif (!empty($playlist['links'])) {
-    foreach ($playlist['links'] as $i => $link) {
-        $musicas[] = [
-            'id_video' => extractYoutubeId($link),
-            'titulo'   => "Faixa " . ($i+1),
-            'url'      => $link
-        ];
-    }
+    return "";
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="utf-8">
-<title><?= htmlspecialchars($playlist['nome']) ?> — YouPlaylist</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title><?= htmlspecialchars($playlist['nome']) ?></title>
+    <link rel="stylesheet" href="style.css">
+<style>
+/* ------- GERAL -------- */
+main { margin-top: 1.5rem; }
+
+/* ------- PLAYER -------- */
+.player-box {
+    width: 320px;
+    background:#111;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    box-shadow:0 0 12px #000;
+}
+.player-iframe { width:100%; height:180px; border-radius:10px; border:none; }
+.player-buttons { display:flex; gap:10px; width:100%; }
+.player-buttons button {
+    flex:1; padding:8px 0; background:#333; border:none; color:#fff;
+    font-size:16px; border-radius:6px; cursor:pointer;
+}
+.player-buttons button:hover { background:#555; }
+
+/* ------- LISTA DE FAIXAS -------- */
+.tracks { display:flex; flex-direction:column; gap:14px; }
+.track-card {
+    display:flex; align-items:center; background:#1b1b1b;
+    padding:10px; border-radius:10px; cursor:pointer; transition:0.2s; border:1px solid #222;
+}
+.track-card:hover { background:#222; transform:scale(1.01); }
+.track-thumb img { width:120px; height:70px; object-fit:cover; border-radius:8px; }
+.track-meta { margin-left:10px; flex:1; }
+.track-title { font-size:16px; color:#fff; font-weight:600; }
+.track-url { font-size:12px; opacity:0.6; }
+
+/* Botão delete */
+.track-card form button { padding:6px 10px; border:none; border-radius:6px; color:#fff; background:#a00; cursor:pointer; }
+.track-card form button:hover { background:#c00; }
+
+/* Botão deletar playlist */
+.delete-playlist-btn {
+    padding:8px 12px;
+    background:#a00;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+.delete-playlist-btn:hover { background:#c00; }
+
+</style>
 </head>
 <body>
 
 <header>
-  <h1>🎧 YouPlaylist</h1>
-  <nav>
-    <a href="inicio.php">Início</a>
-    <a href="index.php">Minhas Playlists</a>
-  </nav>
+    <h1>🎧 YouPlaylist</h1>
+    <nav>
+        <a href="index.php">Início</a>
+        <a href="sobre.php">Sobre</a>
+    </nav>
 </header>
 
 <main>
-  <h2 style="color:#FF4B2B"><?= htmlspecialchars($playlist['nome']) ?></h2>
-  <p><?= count($musicas) ?> músicas</p>
 
-  <a href="add-musica.php?id=<?= $playlist['id'] ?>" class="new-playlist-btn">Adicionar Música</a>
+<h2><?= htmlspecialchars($playlist['nome']) ?></h2>
+<p><?= $total ?> músicas</p>
 
-  <?php if (!empty($musicas)):
+<!-- BOTÕES SUPERIORES -->
+<div style="margin: 1rem 0; display:flex; gap:10px;">
+    <a href="add-musica.php?id=<?= $id ?>" class="btn">Adicionar Música</a>
+    <a href="index.php" class="btn" style="background:#444;">Voltar</a>
+    <?php if ($total > 0): ?>
+    <button onclick="shuffle()" class="btn" style="background:#2d6;">🔀 Shuffle</button>
+    <?php endif; ?>
 
-    $firstId = $musicas[0]['id_video'];
-    $firstEmbed = $firstId
-        ? "https://www.youtube.com/embed/$firstId?autoplay=1&rel=0"
-        : "";
-  ?>
+    <!-- Botão deletar playlist -->
+    <form method="post" action="delete-playlist.php" onsubmit="return confirm('Tem certeza que deseja deletar a playlist inteira?')" style="display:inline;">
+        <input type="hidden" name="id" value="<?= $id ?>">
+        <button type="submit" class="delete-playlist-btn">🗑 Deletar Playlist</button>
+    </form>
+</div>
 
-  <div class="player-box">
-    <iframe id="videoPlayer"
-            class="player-iframe"
-            src="<?= $firstEmbed ?>"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope"
-            allowfullscreen></iframe>
+<?php if ($total > 0): ?>
 
+<!-- PLAYER COMPACTO -->
+<div class="player-box">
+    <iframe id="player"
+        class="player-iframe"
+        src="https://www.youtube.com/embed/<?= extract_youtube_id_local($links[0]) ?>?autoplay=1"
+        allowfullscreen>
+    </iframe>
     <div class="player-buttons">
-      <button id="prevBtn">◀ Anterior</button>
-      <button id="nextBtn">Próxima ▶</button>
+        <button onclick="prev()">⏮</button>
+        <button onclick="next()">⏭</button>
     </div>
-  </div>
+</div>
 
-  <div class="tracks" id="tracksList">
-    <?php foreach ($musicas as $i => $m):
-        $thumb = $m['id_video']
-            ? "https://img.youtube.com/vi/{$m['id_video']}/hqdefault.jpg"
-            : "https://via.placeholder.com/320x180?text=Sem+Thumbnail";
-    ?>
-    <div class="track-card" data-index="<?= $i ?>" data-video-id="<?= $m['id_video'] ?>">
-      <div class="track-thumb"><img src="<?= $thumb ?>"></div>
-      <div class="track-meta">
-        <div class="track-title"><?= htmlspecialchars($m['titulo']) ?></div>
-        <div class="track-url"><?= htmlspecialchars($m['url']) ?></div>
-      </div>
+<!-- LISTA -->
+<div class="tracks">
+<?php foreach ($links as $i => $url): 
+    $idyt = extract_youtube_id_local($url);
+    $thumb = "https://img.youtube.com/vi/$idyt/hqdefault.jpg";
+?>
+    <div class="track-card" onclick="play(<?= $i ?>)">
+        <div class="track-thumb"><img src="<?= $thumb ?>" alt="Thumbnail"></div>
+        <div class="track-meta">
+            <div class="track-title">Faixa <?= $i+1 ?></div>
+            <div class="track-url"><?= htmlspecialchars($url) ?></div>
+        </div>
+        <form method="post" action="delete.php" onsubmit="return confirm('Excluir esta música?')">
+            <input type="hidden" name="playlist" value="<?= $id ?>">
+            <input type="hidden" name="index" value="<?= $i ?>">
+            <button>🗑</button>
+        </form>
     </div>
-    <?php endforeach; ?>
-  </div>
+<?php endforeach; ?>
+</div>
 
-  <?php else: ?>
-    <p>Nenhuma música cadastrada.</p>
-  <?php endif; ?>
+<?php else: ?>
+<p>Nenhuma música ainda. Clique em <strong>Adicionar Música</strong>.</p>
+<?php endif; ?>
+
 </main>
 
-<footer>
-  © 2025 YouPlaylist
-</footer>
-
 <script>
-const tracks = <?= json_encode($musicas) ?>;
-let current = 0;
+let links = <?= json_encode($links) ?>;
+let index = 0;
 
-const video = document.getElementById("videoPlayer");
-const prev = document.getElementById("prevBtn");
-const next = document.getElementById("nextBtn");
-
-function loadVideo(i, autoplay = true) {
-    if (!tracks[i]) return;
-    const id = tracks[i].id_video;
-    const src = "https://www.youtube.com/embed/" + id + "?rel=0&autoplay=" + (autoplay ? 1 : 0);
-    video.src = src;
-    current = i;
+function extractID(url) {
+    let r = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+    return r ? r[1] : "";
 }
 
-prev.onclick = () => {
-    if (current > 0) loadVideo(current - 1);
-};
+function play(i) {
+    index = i;
+    document.getElementById("player").src =
+        "https://www.youtube.com/embed/" + extractID(links[i]) + "?autoplay=1";
+}
 
-next.onclick = () => {
-    if (current < tracks.length - 1) loadVideo(current + 1);
-};
+function next() {
+    index = (index + 1) % links.length;
+    play(index);
+}
 
-document.querySelectorAll(".track-card").forEach(card => {
-  card.onclick = () => {
-    const i = parseInt(card.dataset.index);
-    loadVideo(i);
-  };
-});
+function prev() {
+    index = (index - 1 + links.length) % links.length;
+    play(index);
+}
+
+function shuffle() {
+    index = Math.floor(Math.random() * links.length);
+    play(index);
+}
 </script>
 
 </body>

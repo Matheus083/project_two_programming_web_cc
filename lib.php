@@ -32,3 +32,12 @@ function next_id(array $playlists): int {
     $ids = array_column($playlists, 'id');
     return max($ids) + 1;
 }
+
+function extract_youtube_id($url) {
+    $pattern = '/v=([^&]+)/';
+    if (preg_match($pattern, $url, $match)) {
+        return $match[1];
+    }
+    return "";
+}
+
