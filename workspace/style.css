@@ -253,3 +253,39 @@ button:hover, .btn:hover {
   .mini-thumb { width: 56px; height: 38px; }
   .track-thumb { width: 70px; height: 40px; }
 }
+
+.player-box {
+    width: 340px;
+    margin: 0 auto;
+    background: #1b1b1b;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.4);
+}
+
+.player-iframe {
+    width: 100%;
+    height: 190px;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.player-buttons {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.player-buttons button {
+    background: #2d2d2d;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.player-buttons button:hover {
+    opacity: .7;
+}

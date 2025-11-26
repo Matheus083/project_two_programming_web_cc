@@ -1,39 +1,14 @@
 <?php
 require 'lib.php';
 
-/*
- * Se a função já existir em lib.php, não a redefinimos.
- * Isso evita o "Cannot redeclare" quando você carregar ambos os arquivos.
- */
-if (!function_exists('extract_youtube_id')) {
-    function extract_youtube_id($url) {
-        if (preg_match('/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/', $url, $m)) {
-            return $m[1];
-        }
-        // fallback: tenta capturar qualquer sequência de 11 chars (menos agressivo)
-        if (preg_match('/([a-zA-Z0-9_-]{11})/', $url, $m2)) {
-            return $m2[1];
-        }
-        return "";
-    }
-}
-
 $id = $_GET['id'] ?? null;
-
 if (!$id) {
-    header("Location: index.php");
+    echo "<p>ID inválido.</p>";
     exit;
 }
 
 $playlists = db_load();
-$playlist = null;
-
-foreach ($playlists as $p) {
-    if ($p['id'] == $id) {
-        $playlist = $p;
-        break;
-    }
-}
+$playlist = array_values(array_filter($playlists, fn($p) => $p['id'] == $id))[0] ?? null;
 
 if (!$playlist) {
     echo "<p>Playlist não encontrada.</p>";
@@ -41,119 +16,177 @@ if (!$playlist) {
 }
 
 $links = $playlist['links'] ?? [];
-$hasTracks = count($links) > 0;
+$total = count($links);
+
+function extract_youtube_id_local($url) {
+    if (preg_match('/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/', trim($url), $m)) {
+        return $m[1];
+    }
+    return "";
+}
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="utf-8">
-<title><?= htmlspecialchars($playlist['nome']) ?></title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title><?= htmlspecialchars($playlist['nome']) ?></title>
+    <link rel="stylesheet" href="style.css">
 <style>
-/* Pequenos estilos locais (opcional) para garantir espaçamento */
-.playlist-header { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1.2rem; }
-.playlist-header h2 { margin:0; color:#fff; }
+/* ------- GERAL -------- */
+main { margin-top: 1.5rem; }
+
+/* ------- PLAYER -------- */
+.player-box {
+    width: 320px;
+    background:#111;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    box-shadow:0 0 12px #000;
+}
+.player-iframe { width:100%; height:180px; border-radius:10px; border:none; }
+.player-buttons { display:flex; gap:10px; width:100%; }
+.player-buttons button {
+    flex:1; padding:8px 0; background:#333; border:none; color:#fff;
+    font-size:16px; border-radius:6px; cursor:pointer;
+}
+.player-buttons button:hover { background:#555; }
+
+/* ------- LISTA DE FAIXAS -------- */
+.tracks { display:flex; flex-direction:column; gap:14px; }
+.track-card {
+    display:flex; align-items:center; background:#1b1b1b;
+    padding:10px; border-radius:10px; cursor:pointer; transition:0.2s; border:1px solid #222;
+}
+.track-card:hover { background:#222; transform:scale(1.01); }
+.track-thumb img { width:120px; height:70px; object-fit:cover; border-radius:8px; }
+.track-meta { margin-left:10px; flex:1; }
+.track-title { font-size:16px; color:#fff; font-weight:600; }
+.track-url { font-size:12px; opacity:0.6; }
+
+/* Botão delete */
+.track-card form button { padding:6px 10px; border:none; border-radius:6px; color:#fff; background:#a00; cursor:pointer; }
+.track-card form button:hover { background:#c00; }
+
+/* Botão deletar playlist */
+.delete-playlist-btn {
+    padding:8px 12px;
+    background:#a00;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+.delete-playlist-btn:hover { background:#c00; }
+
 </style>
 </head>
 <body>
 
-<div class="playlist-header">
-    <h2><?= htmlspecialchars($playlist['nome']) ?></h2>
-    <div>
-        <a class="btn" href="add-musica.php?id=<?= urlencode($playlist['id']) ?>">Adicionar Música</a>
-        <a class="btn" style="background:#333; margin-left:.6rem;" href="index.php">Voltar</a>
-    </div>
+<header>
+    <h1>🎧 YouPlaylist</h1>
+    <nav>
+        <a href="index.php">Início</a>
+        <a href="sobre.php">Sobre</a>
+    </nav>
+</header>
+
+<main>
+
+<h2><?= htmlspecialchars($playlist['nome']) ?></h2>
+<p><?= $total ?> músicas</p>
+
+<!-- BOTÕES SUPERIORES -->
+<div style="margin: 1rem 0; display:flex; gap:10px;">
+    <a href="add-musica.php?id=<?= $id ?>" class="btn">Adicionar Música</a>
+    <a href="index.php" class="btn" style="background:#444;">Voltar</a>
+    <?php if ($total > 0): ?>
+    <button onclick="shuffle()" class="btn" style="background:#2d6;">🔀 Shuffle</button>
+    <?php endif; ?>
+
+    <!-- Botão deletar playlist -->
+    <form method="post" action="delete-playlist.php" onsubmit="return confirm('Tem certeza que deseja deletar a playlist inteira?')" style="display:inline;">
+        <input type="hidden" name="id" value="<?= $id ?>">
+        <button type="submit" class="delete-playlist-btn">🗑 Deletar Playlist</button>
+    </form>
 </div>
 
-<?php if ($hasTracks): ?>
+<?php if ($total > 0): ?>
 
+<!-- PLAYER COMPACTO -->
 <div class="player-box">
-    <iframe id="playerFrame" class="player-iframe" src="" allow="autoplay" allowfullscreen></iframe>
-
+    <iframe id="player"
+        class="player-iframe"
+        src="https://www.youtube.com/embed/<?= extract_youtube_id_local($links[0]) ?>?autoplay=1"
+        allowfullscreen>
+    </iframe>
     <div class="player-buttons">
-        <button id="btnPrev">⏮ Voltar</button>
-        <button id="btnNext">⏭ Avançar</button>
+        <button onclick="prev()">⏮</button>
+        <button onclick="next()">⏭</button>
     </div>
 </div>
 
-<script>
-const tracks = <?= json_encode($links, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) ?>;
-let currentTrack = 0;
-const frame = document.getElementById("playerFrame");
-
-function toEmbed(url) {
-    // tenta extrair id e montar URL embed segura
-    try {
-        // remove parâmetros após &
-        let clean = url.split('&')[0];
-        // transforma watch?v=... e youtu.be/... em embed
-        clean = clean.replace("watch?v=", "embed/");
-        clean = clean.replace("youtu.be/", "youtube.com/embed/");
-        // garante https
-        if (!clean.startsWith("https://")) clean = "https://" + clean.replace(/^https?:\/\//, "");
-        return clean + "?autoplay=1";
-    } catch(e) {
-        return "";
-    }
-}
-
-function loadTrack(i) {
-    if (i < 0 || i >= tracks.length) return;
-    currentTrack = i;
-    const embed = toEmbed(tracks[currentTrack]);
-    frame.src = embed;
-    // atualiza destaque visual (se quiser)
-    document.querySelectorAll('.track-card').forEach((c, idx) => {
-        c.style.opacity = idx === i ? '0.9' : '1';
-    });
-}
-
-function nextTrack() { loadTrack((currentTrack + 1) % tracks.length); }
-function prevTrack() { loadTrack((currentTrack - 1 + tracks.length) % tracks.length); }
-
-document.addEventListener('DOMContentLoaded', () => {
-    // liga botões
-    document.getElementById('btnNext').addEventListener('click', nextTrack);
-    document.getElementById('btnPrev').addEventListener('click', prevTrack);
-
-    // liga cards
-    document.querySelectorAll('.track-card').forEach((card, i) => {
-        card.addEventListener('click', () => loadTrack(i));
-        card.addEventListener('keypress', (e) => { if (e.key === 'Enter') loadTrack(i); });
-    });
-
-    // carrega primeira faixa
-    loadTrack(0);
-});
-</script>
-
-<?php else: ?>
-
-<p style="margin-top:20px; color:#ccc;">Nenhuma música adicionada ainda.</p>
-
-<?php endif; ?>
-
-<hr style="margin: 2rem 0; opacity: .12;">
-
-<h3>Faixas da playlist</h3>
-
+<!-- LISTA -->
 <div class="tracks">
 <?php foreach ($links as $i => $url): 
-    $vid = extract_youtube_id($url);
-    $thumb = $vid ? "https://img.youtube.com/vi/{$vid}/hqdefault.jpg" : "https://via.placeholder.com/320x180?text=Sem+Thumbnail";
+    $idyt = extract_youtube_id_local($url);
+    $thumb = "https://img.youtube.com/vi/$idyt/hqdefault.jpg";
 ?>
-    <div class="track-card" tabindex="0" role="button" aria-pressed="false">
-        <div class="track-thumb"><img src="<?= htmlspecialchars($thumb) ?>" alt="thumb"></div>
+    <div class="track-card" onclick="play(<?= $i ?>)">
+        <div class="track-thumb"><img src="<?= $thumb ?>" alt="Thumbnail"></div>
         <div class="track-meta">
-            <div class="track-title">Faixa <?= $i + 1 ?></div>
+            <div class="track-title">Faixa <?= $i+1 ?></div>
             <div class="track-url"><?= htmlspecialchars($url) ?></div>
         </div>
+        <form method="post" action="delete.php" onsubmit="return confirm('Excluir esta música?')">
+            <input type="hidden" name="playlist" value="<?= $id ?>">
+            <input type="hidden" name="index" value="<?= $i ?>">
+            <button>🗑</button>
+        </form>
     </div>
 <?php endforeach; ?>
 </div>
 
-<br><br>
-<a href="index.php" class="btn" style="background:#333;">Voltar</a>
+<?php else: ?>
+<p>Nenhuma música ainda. Clique em <strong>Adicionar Música</strong>.</p>
+<?php endif; ?>
+
+</main>
+
+<script>
+let links = <?= json_encode($links) ?>;
+let index = 0;
+
+function extractID(url) {
+    let r = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+    return r ? r[1] : "";
+}
+
+function play(i) {
+    index = i;
+    document.getElementById("player").src =
+        "https://www.youtube.com/embed/" + extractID(links[i]) + "?autoplay=1";
+}
+
+function next() {
+    index = (index + 1) % links.length;
+    play(index);
+}
+
+function prev() {
+    index = (index - 1 + links.length) % links.length;
+    play(index);
+}
+
+function shuffle() {
+    index = Math.floor(Math.random() * links.length);
+    play(index);
+}
+</script>
 
 </body>
 </html>
