@@ -1,60 +1,53 @@
 <?php
 require 'lib.php';      
+verificar_auth();
 $playlists = db_load(); 
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YouPlaylist - Minhas Playlists</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <title>Minhas Playlists</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <header>
-    <h1>🎧 YouPlaylist</h1>
+    <h1>You<span>Playlist</span></h1>
     <nav>
-      <a href="inicio.php">Início</a>
-      <a href="index.php">Minhas Playlists</a>
-      <a href="sobre.php">Sobre</a>
+      <a href="index.php" class="active">Playlists</a>
+      <a href="criar.php">Nova</a>
+      <a href="logout.php" class="logout-btn">Sair</a>
     </nav>
   </header>
 
   <main>
-    <section class="intro">
-      <h2>Minhas Playlists</h2>
-      <a href="criar.php" class="new-playlist-btn">+ Criar nova playlist</a>
-    </section>
+    <div class="intro-section">
+      <div>
+          <h2>Olá, <?= htmlspecialchars($_SESSION['usuario']) ?></h2>
+          <p style="color:var(--text-muted)">Selecione uma playlist para ouvir</p>
+      </div>
+      <a href="criar.php" class="btn">+ Criar Playlist</a>
+    </div>
 
-    <section class="playlist-grid">
-
+    <div class="playlist-grid">
       <?php if (!empty($playlists)): ?>
         <?php foreach ($playlists as $p): ?>
-          <div class="playlist-card">
-            <h3><?= htmlspecialchars($p["nome"]) ?></h3>
-
-            <p>
-              <?= isset($p["links"]) ? count($p["links"]) : 0 ?> músicas
-            </p>
-
-            <button onclick="location.href='view.php?id=<?= $p['id'] ?>'">
-              ▶ Ver Playlist
-            </button>
+          <div class="playlist-card" onclick="location.href='view.php?id=<?= $p['id'] ?>'">
+            <div class="playlist-icon">🎵</div>
+            <div>
+                <h3><?= htmlspecialchars($p["nome"]) ?></h3>
+                <p><?= isset($p["links"]) ? count($p["links"]) : 0 ?> faixas</p>
+            </div>
+            <button class="btn" style="width:100%; border-radius:8px; padding:8px;">Tocar Agora</button>
           </div>
         <?php endforeach; ?>
       <?php else: ?>
-        <p>Você ainda não possui playlists cadastradas. </p>
+        <p style="color:#777; width:100%;">Nenhuma playlist encontrada. Crie a primeira!</p>
       <?php endif; ?>
-
-    </section>
+    </div>
   </main>
 
-  <footer>
-    © 2025 Grupo de Desenvolvimento Web | Projeto YouPlaylist
-  </footer>
-
+  <footer>© 2025 YouPlaylist - Organized Layout</footer>
 </body>
 </html>
