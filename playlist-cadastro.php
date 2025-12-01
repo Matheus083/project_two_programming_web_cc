@@ -1,51 +1,32 @@
 <?php
-require 'lib.php';
-verificar_auth();
+/**
+ * Este arquivo exibe o formulário para criação de uma nova playlist.
+ * Ele **não grava nada** no arquivo JSON — apenas coleta os dados.
+ * O processamento ocorre em: playlist-cadastro.php
+ */
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: criar.php");
-    exit;
-}
+// Nome do arquivo onde playlists são armazenadas
+$arquivo = "playlists.json";
 
-$nome = $_POST['nome'] ?? "";
-$url  = $_POST['url']  ?? ""; 
-
-$playlists = db_load();
-$id = next_id($playlists);
-
-$nova_playlist = [
-    "id"    => $id,
-    "nome"  => $nome,
-    "links" => []
-];
-
-if ($url !== "") {
-    $nova_playlist["links"][] = $url;
-}
-
-$playlists[] = $nova_playlist;
-
-db_save($playlists);
-
+// Título da página
+echo "<h2>Cadastro de playlists</h2>";
 ?>
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Playlist cadastrada</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<header>
-    <h1>Playlists</h1>
-    <nav><a href="index.php">Início</a></nav>
-</header>
-<main>
-    <div class="form-box" style="text-align:center;">
-        <h2 style="color:#FF4B2B; margin-bottom:1rem;">Sucesso!</h2>
-        <p>Playlist <strong><?= htmlspecialchars($nome) ?></strong> cadastrada.</p>
-        <a class="btn" style="margin-top:1.5rem;" href="index.php">Listar Minhas Playlists</a>
-    </div>
-</main>
-</body>
-</html>
+
+<!--
+    Formulário de criação de playlist:
+    - Envia os dados via POST para playlist-cadastro.php
+    - Campos:
+        • nome: nome da playlist
+        • url: primeiro link opcional do YouTube
+-->
+<form method="post" action="playlist-cadastro.php">
+
+    <label>Nome da playlist:</label>
+    <input type="text" name="nome" required><br>
+
+    <label>Primeiro link do YouTube (opcional):</label>
+    <input type="url" name="url" placeholder="https://youtu.be/..."><br>
+
+    <input type="submit" value="Cadastrar">
+
+</form>

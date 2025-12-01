@@ -344,3 +344,22 @@ footer {
     .intro-section { flex-direction: column; gap: 15px; align-items: flex-start; }
     .form-box { padding: 2rem 1.5rem; }
 }
+
+.new-playlist-btn {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+.new-playlist-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}

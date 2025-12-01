@@ -19,11 +19,12 @@
 
   <main class="sobre-page">
 
+    <!-- Seção SOBRE NÓS -->
     <section class="sobre-box">
       <h2>Sobre Nós</h2>
 
       <p>
-        O <strong>YourPlaylist</strong> é um projeto desenvolvido por um grupo de estudantes com o objetivo de tornar simples
+        O <strong>YouPlaylist</strong> é um projeto desenvolvido por um grupo de estudantes com o objetivo de tornar simples
         e rápido criar playlists usando links do YouTube.
       </p>
 
@@ -37,24 +38,25 @@
       </p>
     </section>
 
+    <!-- Seção MISSÃO -->
+    <section class="sobre-box">
+      <h2>Nossa Missão</h2>
+
+      <p>
+        Nossa missão é tornar a criação e organização de playlists algo simples, rápido e intuitivo,
+        oferecendo uma experiência agradável para todos que amam música.
+      </p>
+    </section>
+
+    <!-- Frase motivacional -->
+    <div class="motivacional-container">
+      <div class="motivacional-texto">
+        A música conecta pessoas — e organizar suas playlists deveria ser tão simples quanto dar play.
+      </div>
+    </div>
+
   </main>
-  <main class="sobre-page">
-  <section class="sobre-box">
 
-  <h2>Nossa Missão</h2>
-
-  <p>
-    Nossa missão é tornar a criação e organização de playlists algo simples, rápido e intuitivo,
-    oferecendo uma experiência agradável para todos que amam música.
-  </p>
-</section>
-
-<div class="motivacional-container">
-  <div class="motivacional-texto">
-  A música conecta pessoas — e organizar suas playlists deveria ser tão simples quanto dar play
-  </div>
-</div>
-</main>
   <footer>
     © 2025 Grupo de Desenvolvimento Web | Projeto YouPlaylist
   </footer>

@@ -1,0 +1,35 @@
+[
+    {
+        "login": "Matheus083",
+        "senha": "$2y$10$dACWDSVBsM/iPn32eh0SC.olhjkXSlOQTpkWF/DUZebX/.LuBzV7y",
+        "playlists": [
+            {
+                "id": 1,
+                "nome": "teste01",
+                "links": [
+                    "https://www.youtube.com/watch?v=ErvgV4P6Fzc&list=RDErvgV4P6Fzc&start_radio=1"
+                ]
+            },
+            {
+                "id": 2,
+                "nome": "Matheus",
+                "links": [
+                    "https://www.youtube.com/watch?v=1w7OgIMMRc4"
+                ]
+            }
+        ]
+    },
+    {
+        "login": "matheus",
+        "senha": "$2y$10$53ly6UGiesJyAWEJWnA3Xuxr9pyEhwmv.QLO.856sldzOV421ufM.",
+        "playlists": [
+            {
+                "id": 1,
+                "nome": "teste01",
+                "links": [
+                    "https://www.youtube.com/watch?v=WM8bTdBs-cw"
+                ]
+            }
+        ]
+    }
+]
