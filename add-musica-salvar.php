@@ -1,17 +1,16 @@
 <?php
 require 'lib.php';
+verificar_auth();
 
 $id = $_POST['id'] ?? null;
 $url = $_POST['url'] ?? "";
 
 if (!$id || $url === "") {
-    echo "<p>Dados inválidos.</p>";
-    echo "<p><a href='index.php'>Voltar</a></p>";
+    header("Location: add-musica.php?id=$id&error=empty");
     exit;
 }
 
 $playlists = db_load();
-
 $salvou = false;
 
 foreach ($playlists as $index => $p) {
@@ -23,10 +22,7 @@ foreach ($playlists as $index => $p) {
 }
 
 if ($salvou) {
-    file_put_contents(
-        "playlists.json",
-        json_encode($playlists, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
-    );
+    db_save($playlists);
 }
 
 header("Location: view.php?id=" . $id);

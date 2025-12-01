@@ -1,24 +1,24 @@
 <?php
 require 'lib.php';
+verificar_auth();
 
 $id = $_POST['id'] ?? null;
-if (!$id) {
-    echo "<p>ID inválido.</p>";
-    exit;
-}
+if (!$id) exit;
 
 $playlists = db_load();
-$index = array_search($id, array_column($playlists, 'id'));
+$index = false;
 
-if ($index === false) {
-    echo "<p>Playlist não encontrada.</p>";
-    exit;
+foreach ($playlists as $key => $p) {
+    if ($p['id'] == $id) {
+        $index = $key;
+        break;
+    }
 }
 
-// Remove a playlist
-array_splice($playlists, $index, 1);
-db_save($playlists);
+if ($index !== false) {
+    array_splice($playlists, $index, 1);
+    db_save($playlists);
+}
 
-// Redireciona para a página inicial
 header("Location: index.php");
 exit;
