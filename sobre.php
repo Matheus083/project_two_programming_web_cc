@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sobre Nós - YouPlaylist</title>
+  <title>Sobre Nós - YourPlaylist</title>
   <link rel="stylesheet" href="style.css" />
   <style>
 
@@ -74,7 +74,7 @@
       <section class="sobre-box">
         <h2>Sobre Nós</h2>
         <p>
-          O <strong>YouPlaylist</strong> nasceu como um projeto acadêmico do curso de Ciência da Computação,
+          O <strong>YourPlaylist</strong> nasceu como um projeto acadêmico do curso de Ciência da Computação,
           com a missão de tornar simples o que sempre deveria ter sido simples:
           organizar e ouvir suas músicas favoritas com liberdade.
         </p>

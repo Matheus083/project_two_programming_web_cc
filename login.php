@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Login - YouPlaylist</title>
+    <title>Login - YourPlaylist</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
