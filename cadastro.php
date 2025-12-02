@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro - YouPlaylist</title>
+    <title>Cadastro - YourPlaylist</title>
 
     <!-- Estilos globais do projeto -->
     <link rel="stylesheet" href="style.css">
