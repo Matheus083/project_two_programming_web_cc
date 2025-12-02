@@ -123,6 +123,7 @@ $total = count($links);
                 <input type="hidden" name="index" value="<?= $i ?>">
                 <button class="track-action">✖</button>
             </form>
+
         </div>
     <?php endforeach; ?>
     </div>

@@ -19,7 +19,7 @@ $playlists = db_load();
 
   <!-- Cabeçalho com título e menu de navegação -->
   <header>
-    <h1>You<span>Playlist</span></h1>
+    <h1>Your<span>Playlist</span></h1>
 
     <nav>
       <!-- Link para página atual -->

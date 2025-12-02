@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <header>
-        <h1>You<span>Playlist</span></h1>
+        <h1>Your<span>Playlist</span></h1>
     </header>
 
     <main>
