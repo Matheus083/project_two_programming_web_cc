@@ -92,7 +92,7 @@ $playlists = db_load();
   </main>
 
   <footer>
-    © 2025 YouPlaylist - Organized Layout
+    © 2025 YourPlaylist - Organized Layout
   </footer>
 </body>
 </html>
