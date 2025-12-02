@@ -60,7 +60,7 @@
   <header>
     <h1>🎧 YourPlaylist</h1>
     <nav>
-      <a href="inicio.php">Início</a>
+      <a href="index.php">Início</a>
       <a href="index.php">Minhas Playlists</a>
       <a class="active" href="sobre.php">Sobre</a>
     </nav>
@@ -108,4 +108,5 @@
     © 2025 YourPlaylist — Projeto de Desenvolvimento Web
   </footer>
 </body>
+
 </html>
