@@ -14,7 +14,7 @@ verificar_auth();
   <meta charset="UTF-8" />
 
   <!-- Título que aparece na aba do navegador -->
-  <title>Criar Playlist - YouPlaylist</title>
+  <title>Criar Playlist - YourPlaylist</title>
 
   <!-- Estilos gerais do sistema -->
   <link rel="stylesheet" href="style.css" />
@@ -24,7 +24,7 @@ verificar_auth();
   <!-- Cabeçalho da página -->
   <header>
     <!-- Logo com emoji -->
-    <h1>🎧 YouPlaylist</h1>
+    <h1>🎧 YourPlaylist</h1>
 
     <!-- Menu de navegação -->
     <nav>
@@ -61,6 +61,6 @@ verificar_auth();
   </main>
 
   <!-- Rodapé simples -->
-  <footer>© 2025 YouPlaylist</footer>
+  <footer>© 2025 YourPlaylist</footer>
 </body>
 </html>
