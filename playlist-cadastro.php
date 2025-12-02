@@ -1,32 +1,51 @@
 <?php
-/**
- * Este arquivo exibe o formulário para criação de uma nova playlist.
- * Ele **não grava nada** no arquivo JSON — apenas coleta os dados.
- * O processamento ocorre em: playlist-cadastro.php
- */
+// Processa o cadastro de uma nova playlist
 
-// Nome do arquivo onde playlists são armazenadas
-$arquivo = "playlists.json";
+require 'lib.php';
 
-// Título da página
-echo "<h2>Cadastro de playlists</h2>";
-?>
+// Garante que só usuário logado pode criar playlist
+verificar_auth();
 
-<!--
-    Formulário de criação de playlist:
-    - Envia os dados via POST para playlist-cadastro.php
-    - Campos:
-        • nome: nome da playlist
-        • url: primeiro link opcional do YouTube
--->
-<form method="post" action="playlist-cadastro.php">
+// Só aceita requisição via POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: criar.php");
+    exit;
+}
 
-    <label>Nome da playlist:</label>
-    <input type="text" name="nome" required><br>
+// Coleta os dados enviados pelo formulário
+$nome = $_POST['nome'] ?? '';
+$url  = $_POST['url'] ?? '';
 
-    <label>Primeiro link do YouTube (opcional):</label>
-    <input type="url" name="url" placeholder="https://youtu.be/..."><br>
+// Validação simples: nome é obrigatório
+if (trim($nome) === '') {
+    header("Location: criar.php");
+    exit;
+}
 
-    <input type="submit" value="Cadastrar">
+// Carrega playlists atuais do usuário logado
+$playlists = db_load();
 
-</form>
+// Gera um novo ID único usando a função do lib.php
+$id = next_id($playlists);
+
+// Monta a nova playlist
+$novaPlaylist = [
+    'id'    => $id,
+    'nome'  => $nome,
+    'links' => []
+];
+
+// Se o usuário já informou um link inicial, adiciona
+if (trim($url) !== '') {
+    $novaPlaylist['links'][] = $url;
+}
+
+// Adiciona a nova playlist ao array
+$playlists[] = $novaPlaylist;
+
+// Salva de volta no JSON associado ao usuário logado
+db_save($playlists);
+
+// Redireciona para a página da playlist recém-criada
+header("Location: view.php?id=" . $id);
+exit;
