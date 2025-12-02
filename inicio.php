@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Título da aba -->
-  <title>Início - YouPlaylist</title>
+  <title>Início - YourPlaylist</title>
 
   <!-- CSS principal do projeto -->
   <link rel="stylesheet" href="style.css" />
@@ -14,7 +14,7 @@
 
   <!-- Cabeçalho do site -->
   <header>
-    <h1>🎧 YouPlaylist</h1>
+    <h1>🎧 YourPlaylist</h1>
 
     <!-- Menu de navegação -->
     <nav>
@@ -33,7 +33,7 @@
 
     <!-- Seção central de boas-vindas -->
     <section>
-      <h2>Bem-vindo ao YouPlaylist!</h2>
+      <h2>Bem-vindo ao YourPlaylist!</h2>
 
       <!-- Parágrafo de apresentação -->
       <p>
@@ -53,7 +53,7 @@
 
   <!-- Rodapé fixo abaixo -->
   <footer>
-    © 2025 Grupo de Desenvolvimento Web | Projeto YouPlaylist
+    © 2025 Grupo de Desenvolvimento Web | Projeto YourPlaylist
   </footer>
 
 </body>
